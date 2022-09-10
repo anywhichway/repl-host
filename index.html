@@ -17,10 +17,6 @@
         margin-top: .5em;
         bottom: .5em;
     }
-    pre code[slot] {
-        width:100%;
-        height:100%;
-    }
     pre code[slot=head]:empty::after{
        font-style: italic;
        content:"html head"
@@ -44,6 +40,6 @@
 <pre placeholder="javascript" title="javascript"><code slot="javascript" class="hljs language-javascript"></code></pre>
 <iframe style="width:calc(100% - 1ch);resize:vertical"></iframe>
 <div id="console" style="width:calc(100% - 1ch);resize:vertical;border:1px solid whitesmoke;min-height:1em;overflow:hidden"></div>
-<script src="./index.js"></script>
+<script type="module" src="./index.js"></script>
 </body>
 </html>
