@@ -9,7 +9,7 @@ to be loaded and instantiated by `@anywhichway/quick-component`.
 Insert this line into your HTML file:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@anywhichway/quick-component.js@0.0.5" component="https://cdn.jsdelivr.net/npm/@anywhichway/repl-host@0.0.3"></script>
+<script src="https://cdn.jsdelivr.net/npm/@anywhichway/quick-component.js" component="https://cdn.jsdelivr.net/npm/@anywhichway/repl-host@0.0.3"></script>
 ```
 
 Version numbers are used above to insulate your use from unexpected changes due to future enhancements. You can also use
@@ -54,4 +54,5 @@ https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe.
 
 # Version History (reverse chronological order)
 
+2022-09-10 v0.0.4 Updated docs
 2022-09-10 v0.0.3 Added documentation and load improvements
