@@ -9,7 +9,7 @@ to be loaded and instantiated by `@anywhichway/quick-component`.
 Insert this line into your HTML file:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@anywhichway/quick-component.js" component="https://cdn.jsdelivr.net/npm/@anywhichway/repl-host@0.0.3"></script>
+<script src="https://cdn.jsdelivr.net/npm/@anywhichway/quick-component@0.0.7" component="https://cdn.jsdelivr.net/npm/@anywhichway/repl-host@0.0.5"></script>
 ```
 
 Version numbers are used above to insulate your use from unexpected changes due to future enhancements. You can also use
@@ -46,13 +46,18 @@ You can provide initial content for any section of the REPL using slots:
 </repl-host>
 ```
 
+Also see the Medium article <a href="https://medium.com/@anywhichway/how-to-host-a-repl-342bc0e15f5d">How to host a REPL</a>.
+
 # Security
 
 REPLs are run in iframes. You can configure the iframe security using the same attributes used by an iframe, i.e.
 `allow`, `allowfullscren`, `allowpaymentrequest`, `referrerpolicy`, `csp`, `sandbox`. See 
 https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe.
 
+CCS and HTML are both sanitized in addition to being placed in an iframe.
+
 # Version History (reverse chronological order)
 
+2022-09-11 v0.0.5 Improved styling support. Updated docs.
 2022-09-10 v0.0.4 Updated docs
 2022-09-10 v0.0.3 Added documentation and load improvements

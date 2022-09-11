@@ -7,15 +7,32 @@
 <body>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.6.0/build/styles/default.min.css">
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.6.0/build/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@anywhichway/iframeeval@0.0.2"></script>
+<script src="./js_beautify.js"></script>
 <style>
+    div.repl {
+        width: 100%;
+        padding-left: .75ch;
+    }
     pre {
         display:block;
-        width:calc(100% - 1ch);
+        width:calc(100% - 2ch);
         resize:vertical;
         overflow:hidden;
         border:1px solid black;
-        margin-top: .5em;
-        bottom: .5em;
+        margin-top: .25em;
+        margin-bottom: .25em;
+        background: #f3f3f3;
+    }
+    pre code[slot]:not([contenteditable="true"])::before {
+        position: relative;
+        left: -1ch;
+        content: "\A0\A0"
+    }
+    pre code[slot][contenteditable="true"]::before {
+        position: relative;
+        left: -1ch;
+        content: "\270E"
     }
     pre code[slot=head]:empty::after{
        font-style: italic;
@@ -33,13 +50,30 @@
         font-style: italic;
         content:"javascript"
     }
+    iframe {
+        width:calc(100% - 2ch);
+        resize:vertical;
+        margin-top: .25em;
+    }
+    div.console {
+        width:calc(100% - 2ch);
+        resize:vertical;
+        border:1px solid whitesmoke;
+        min-height:1em;
+        overflow:hidden;
+        margin-top: .25em;
+        margin-bottom: .25em;
+    }
 </style>
+<style id="replstyle"></style>
+<div class="repl">
 <pre placeholder="head" title="head"><code slot="head" class="hljs language-html"></code></pre>
 <pre placeholder="css" title="css"><code slot="css" class="hljs language-css"></code></pre>
 <pre placeholder="body" title="body"><code slot="body" class="hljs language-html"></code></pre>
 <pre placeholder="javascript" title="javascript"><code slot="javascript" class="hljs language-javascript"></code></pre>
-<iframe style="width:calc(100% - 1ch);resize:vertical"></iframe>
-<div id="console" style="width:calc(100% - 1ch);resize:vertical;border:1px solid whitesmoke;min-height:1em;overflow:hidden"></div>
+<iframe></iframe>
+<div class="console"></div>
+</div>
 <script type="module" src="./index.js"></script>
 </body>
 </html>

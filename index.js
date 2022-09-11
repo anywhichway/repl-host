@@ -20,10 +20,6 @@ self.properties({
         this.setAttribute("contenteditable","false");
         this.cursor = document.createElement("cursor");
         const iframe = this.shadowRoot.querySelector("iframe");
-        ["allow","allowfullscren","allowpaymentrequest","csp","sandbox"].forEach((name) => {
-            const value = this.getAttribute(name);
-            if(value!=null) iframe.setAttribute(name,value)
-        });
         [...this.shadowRoot.querySelectorAll("pre code[slot]")].forEach((textarea) => {
             textarea.addEventListener("beforeinput",(event) => {
                 textarea.previousTextContent = textarea.textContent;
@@ -41,6 +37,16 @@ self.properties({
                     }
                     textarea.innerText = css;
                 }
+                const {target} = event,
+                    name = target.getAttribute("slot"),
+                    slot = this.querySelector(`slot[name="${name}"]`);
+                if(name==="javascript") {
+                    try {
+                        iframe.contentWindow.eval(target.textContent);
+                    } catch(e) {
+                        iframe.contentWindow.console.error(e+"");
+                    }
+                }
                 const outer = textarea.textContent.length >= textarea.previousTextContent.length ? textarea.textContent : textarea.previousTextContent,
                     inner = textarea.textContent.length > textarea.previousTextContent.length ? textarea.previousTextContent : textarea.textContent;
                 for(let i=0;i<outer.length;i++) {
@@ -49,28 +55,15 @@ self.properties({
                         break;
                     }
                 }
-                const {target} = event,
-                    name = target.getAttribute("slot"),
-                    slot = this.querySelector(`slot[name="${name}"]`);
-                if(name==="javascript") {
-                    try {
-                        iframe.contentWindow.eval(target.textContent);
-                        slot.innerText = target.textContent;
-                        this.render();
-                    } catch(e) {
-                        iframe.contentWindow.console.error(e+"");
-                    }
-                } else {
-                    slot.innerText = target.textContent;
-                    this.render();
-                }
+                slot.innerText = target.textContent;
+                this.render();
             });
             textarea.addEventListener("paste",(event) => {
                 event.stopImmediatePropagation();
             })
         });
         let lastError;
-        const console = iframe.contentWindow.console = this.shadowRoot.getElementById("console"),
+        const console = iframe.contentWindow.console = this.shadowRoot.querySelector("div.console"),
             log = (color,...args) => {
                 const div = iframe.contentDocument.createElement("div");
                 div.style.color = color;
@@ -105,7 +98,15 @@ self.properties({
                 css: this.querySelector('slot[name="css"]'),
                 body: this.querySelector('slot[name="body"]'),
                 javascript: this.querySelector('slot[name="javascript"]')
-            };
+            },
+            style = this.querySelector('slot[name="replstyle"]');
+        if(style) {
+            this.shadowRoot.getElementById("replstyle").innerHTML = style.textContent;
+        }
+        ["allow","allowfullscren","allowpaymentrequest","csp","sandbox"].forEach((name) => {
+            const value = this.getAttribute(name);
+            if(value!=null) iframe.setAttribute(name,value)
+        });
         iframe.contentWindow.console.clear();
         Object.entries(slots).forEach(([key,value]) => {
             const hasSlot = this.hasAttribute(key) ? this.getAttribute(key)||true : null;
@@ -118,12 +119,10 @@ self.properties({
             }
             const slot = this.shadowRoot.querySelector(`[slot="${key}"]`);
             slot.setAttribute("spellcheck","false");
-            slot.setAttribute("contenteditable","true");
             if(value) {
+                const readonly = value.getAttribute("readonly")==="true"||value.getAttribute("readonly")===""||hasSlot==="readonly";
+                if(!readonly) slot.setAttribute("contenteditable","true");
                 slot.innerText = value.textContent;
-                [...value.attributes].forEach((attr) => {
-                    slot.setAttribute(attr.name,attr.value);
-                })
             }
             slot.parentElement.style.display = "";
             if(hasSlot==null) {
