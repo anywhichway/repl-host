@@ -61,6 +61,9 @@ self.properties({
             textarea.addEventListener("paste",(event) => {
                 event.stopImmediatePropagation();
             })
+            textarea.addEventListener("click",(event) => {
+                event.stopImmediatePropagation();
+            })
         });
         let lastError;
         const console = iframe.contentWindow.console = this.shadowRoot.querySelector("div.console"),
