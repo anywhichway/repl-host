@@ -58,7 +58,12 @@ CCS and HTML are both sanitized in addition to being placed in an iframe.
 
 # Version History (reverse chronological order)
 
+2022-09-24 v0.0.7 Shift pencil icon to left so cursor does not lay on top of it.
+
 2022-09-13 v0.0.6 Capture clicks so higher level elements do not break component by click processing
+
 2022-09-11 v0.0.5 Improved styling support. Updated docs.
+
 2022-09-10 v0.0.4 Updated docs
+
 2022-09-10 v0.0.3 Added documentation and load improvements
