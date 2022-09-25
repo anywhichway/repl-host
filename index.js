@@ -1,5 +1,3 @@
-const self = window.currentComponent(import.meta.url);
-
 function css_sanitize(css) {
     const iframe = document.createElement("iframe");
     iframe.style.display = "none";
@@ -29,13 +27,7 @@ self.properties({
                 this.cursor.node = textarea;
                 if(textarea.getAttribute("slot")==="css") {
                     textarea.normalize();
-                    const css = css_sanitize(textarea.textContent);
-                    if(css!==textarea.textContent.trim().replaceAll(/\n/g," ").replaceAll(/  +/g, " ")) {
-                        lastError = null;
-                        console.error("CSS appears invalid")
-                        return;
-                    }
-                    textarea.innerText = css;
+                    textarea.innerText =  css_sanitize(textarea.textContent);
                 }
                 const {target} = event,
                     name = target.getAttribute("slot"),
@@ -88,8 +80,8 @@ self.properties({
         console.log = (...args) => log("black",...args);
         console.warn = (...args) => log("orange",...args);
         console.error = (arg) => {
-            if(arg===lastError) return;
-            lastError = arg;
+            if(arg+""===lastError) return;
+            lastError = arg+"";
             log("red",arg);
         }
         console.clear = () => console.innerHTML = "";
