@@ -58,6 +58,8 @@ CCS and HTML are both sanitized in addition to being placed in an iframe.
 
 # Version History (reverse chronological order)
 
+2022-09-25 v0.0.10 Removed debug statements.
+
 2022-09-25 v0.0.9 Relaxed CSS formatting even further.
 
 2022-09-25 v0.0.8 Relaxed CSS format conditions. Updated for changes to quickComponent.

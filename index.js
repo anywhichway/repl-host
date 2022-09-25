@@ -23,7 +23,6 @@ self.properties({
                 textarea.previousTextContent = textarea.textContent;
             })
             textarea.addEventListener("input",(event) => {
-                debugger;
                 event.stopImmediatePropagation();
                 this.cursor.node = textarea;
                 if(textarea.getAttribute("slot")==="css") {
@@ -88,7 +87,6 @@ self.properties({
         console.clear = () => console.innerHTML = "";
     },
     render() {
-        debugger;
         const iframe = this.shadowRoot.querySelector("iframe"),
             slots = {
                 head: this.querySelector('slot[name="head"]'),
