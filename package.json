@@ -1,0 +1,22 @@
+{
+  "name": "@anywhichway/repl-host",
+  "version": "0.0.9",
+  "description": "A web component for hosting REPLs",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anywhichway/repl-host.git"
+  },
+  "keywords": [
+    "REPL"
+  ],
+  "author": "Simon Y. Blackwell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/anywhichway/repl-host/issues"
+  },
+  "homepage": "https://github.com/anywhichway/repl-host#readme"
+}

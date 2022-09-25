@@ -9,7 +9,7 @@ to be loaded and instantiated by `@anywhichway/quick-component`.
 Insert this line into your HTML file:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@anywhichway/quick-component@0.0.7" component="https://cdn.jsdelivr.net/npm/@anywhichway/repl-host@0.0.5"></script>
+<script src="https://cdn.jsdelivr.net/npm/@anywhichway/quick-component@0.0.9" component="https://cdn.jsdelivr.net/npm/@anywhichway/repl-host@0.0.9"></script>
 ```
 
 Version numbers are used above to insulate your use from unexpected changes due to future enhancements. You can also use
@@ -57,6 +57,8 @@ https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe.
 CCS and HTML are both sanitized in addition to being placed in an iframe.
 
 # Version History (reverse chronological order)
+
+2022-09-25 v0.0.9 Relaxed CSS formatting even further.
 
 2022-09-25 v0.0.8 Relaxed CSS format conditions. Updated for changes to quickComponent.
 

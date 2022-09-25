@@ -23,11 +23,12 @@ self.properties({
                 textarea.previousTextContent = textarea.textContent;
             })
             textarea.addEventListener("input",(event) => {
+                debugger;
                 event.stopImmediatePropagation();
                 this.cursor.node = textarea;
                 if(textarea.getAttribute("slot")==="css") {
                     textarea.normalize();
-                    textarea.innerText =  css_sanitize(textarea.textContent);
+                   // textarea.innerText =  css_sanitize(textarea.textContent); // started breaking in v8, not sure why
                 }
                 const {target} = event,
                     name = target.getAttribute("slot"),
@@ -87,6 +88,7 @@ self.properties({
         console.clear = () => console.innerHTML = "";
     },
     render() {
+        debugger;
         const iframe = this.shadowRoot.querySelector("iframe"),
             slots = {
                 head: this.querySelector('slot[name="head"]'),
