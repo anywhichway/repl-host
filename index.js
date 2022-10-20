@@ -14,6 +14,11 @@ function css_sanitize(css) {
 }
 
 self.properties({
+    initialize() {
+        this.addEventListener("keydown",(event) => {
+            event.stopImmediatePropagation();
+        })
+    },
     connected() {
         this.setAttribute("contenteditable","false");
         this.cursor = document.createElement("cursor");
@@ -27,7 +32,7 @@ self.properties({
                 this.cursor.node = textarea;
                 if(textarea.getAttribute("slot")==="css") {
                     textarea.normalize();
-                   // textarea.innerText =  css_sanitize(textarea.textContent); // started breaking in v8, not sure why
+                    // textarea.innerText =  css_sanitize(textarea.textContent); // started breaking in v8, not sure why
                 }
                 const {target} = event,
                     name = target.getAttribute("slot"),
@@ -104,8 +109,10 @@ self.properties({
         });
         iframe.contentWindow.console.clear();
         Object.entries(slots).forEach(([key,value]) => {
-            const hasSlot = this.hasAttribute(key) ? this.getAttribute(key)||true : null;
-            if(hasSlot!==null) {
+            const hasSlot = this.hasAttribute(key) ? this.getAttribute(key)||true : "false";
+            if(hasSlot==="false") {
+                this.querySelector(`slot[name=${key}]`)?.remove();
+            } else {
                 if(!value) {
                     value = slots[key] = document.createElement("slot");
                     value.setAttribute("name",key);
@@ -114,17 +121,27 @@ self.properties({
             }
             const slot = this.shadowRoot.querySelector(`[slot="${key}"]`);
             slot.setAttribute("spellcheck","false");
+            let hidden;
             if(value) {
                 const readonly = value.getAttribute("readonly")==="true"||value.getAttribute("readonly")===""||hasSlot==="readonly";
                 if(!readonly) slot.setAttribute("contenteditable","true");
-                slot.innerText = value.textContent;
+                if(key==="body") {
+                    slot.innerText = value.innerHTML;
+                } else {
+                    slot.innerText = value.textContent;
+                }
+                hidden = value.hasAttribute("hidden") && value.getAttribute("hidden")!=="false";
+                if(hidden) slot.parentElement.style.display = "none";
             }
-            slot.parentElement.style.display = "";
-            if(hasSlot==null) {
+            if(!hidden) slot.parentElement.style.display = "";
+            if(hasSlot==="false") {
                 slot.parentElement.style.display = "none";
-            } else if(!hasSlot) {
+            } else if(hasSlot==="readonly" || hasSlot==="disabled") {
                 slot.setAttribute("readonly","");
                 slot.setAttribute("disabled","");
+                slot.setAttribute("contenteditable","false");
+            } else if(hasSlot==="hidden") {
+                slot.parentElement.style.display = "none";
             }
         })
         iframe.contentDocument.head.innerHTML = "";
@@ -147,7 +164,7 @@ self.properties({
                 if(attr.name!=="name") iframe.contentDocument.body.setAttribute(attr.name,attr.value);
             });
             hljs.highlightElement(body);
-            iframe.contentDocument.body.innerHTML = body.textContent;
+            iframe.contentDocument.body.innerHTML = body.innerText;
         }
         if(slots.javascript) {
             const javascript = this.shadowRoot.querySelector('[slot="javascript"]'),
@@ -199,4 +216,6 @@ self.properties({
         }
     }
 })
+
+
 
