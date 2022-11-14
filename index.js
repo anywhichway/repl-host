@@ -7,8 +7,7 @@ function css_sanitize(css) {
     const style = iframe.contentDocument.createElement('style');
     style.innerHTML = css;
     iframe.contentDocument.head.appendChild(style);
-    const sheet = style.sheet,
-        result = Array.from(style.sheet.cssRules).map(rule => rule.cssText || '').join('\n');
+    const result = Array.from(style.sheet.cssRules).map(rule => rule.cssText || '').join('\n');
     iframe.remove();
     return result;
 }
@@ -16,43 +15,34 @@ function css_sanitize(css) {
 self.properties({
     initialize() {
         this.addEventListener("keydown",(event) => {
-            event.stopImmediatePropagation();
+           // event.stopImmediatePropagation();
         })
     },
     connected() {
-        this.setAttribute("contenteditable","false");
-        this.cursor = document.createElement("cursor");
+        //this.setAttribute("contenteditable","false");
+        //this.cursor = document.createElement("cursor");
         const iframe = this.shadowRoot.querySelector("iframe");
         [...this.shadowRoot.querySelectorAll("pre code[slot]")].forEach((textarea) => {
-            textarea.addEventListener("beforeinput",(event) => {
+            textarea.addEventListener("beforeinput",() => {
                 textarea.previousTextContent = textarea.textContent;
             })
             textarea.addEventListener("input",(event) => {
                 event.stopImmediatePropagation();
-                this.cursor.node = textarea;
-                if(textarea.getAttribute("slot")==="css") {
-                    textarea.normalize();
+                const slotname = textarea.getAttribute("slot");
+                if(slotname==="css") {
+                    //textarea.normalize();
                     // textarea.innerText =  css_sanitize(textarea.textContent); // started breaking in v8, not sure why
                 }
-                const {target} = event,
-                    name = target.getAttribute("slot"),
-                    slot = this.querySelector(`slot[name="${name}"]`);
-                if(name==="javascript") {
+                const {target,currentTarget} = event,
+                    slot = this.querySelector(`slot[name="${slotname}"]`);
+                if(slotname==="script") {
                     try {
                         iframe.contentWindow.eval(target.textContent);
                     } catch(e) {
                         iframe.contentWindow.console.error(e+"");
                     }
                 }
-                const outer = textarea.textContent.length >= textarea.previousTextContent.length ? textarea.textContent : textarea.previousTextContent,
-                    inner = textarea.textContent.length > textarea.previousTextContent.length ? textarea.previousTextContent : textarea.textContent;
-                for(let i=0;i<outer.length;i++) {
-                    if(outer[i]!==inner[i]) {
-                        textarea.start = textarea.textContent.substring(0,i+1);
-                        break;
-                    }
-                }
-                slot.innerText = target.textContent;
+                slot.innerText = currentTarget.editor.getValue();
                 this.render();
             });
             textarea.addEventListener("paste",(event) => {
@@ -63,33 +53,35 @@ self.properties({
             })
         });
         let lastError;
-        const console = iframe.contentWindow.console = this.shadowRoot.querySelector("div.console"),
-            log = (color,...args) => {
-                const div = iframe.contentDocument.createElement("div");
-                div.style.color = color;
-                args.forEach((arg) => {
-                    const span = iframe.contentDocument.createElement("span");
-                    if(arg && typeof(arg)==="object") {
-                        try {
-                            span.innerText = JSON.stringify(arg);
-                        } catch (e) {
+        if(iframe.contentWindow) {
+            const console = iframe.contentWindow.console = this.shadowRoot.querySelector("div.console"),
+                log = (color,...args) => {
+                    const div = iframe.contentDocument.createElement("div");
+                    div.style.color = color;
+                    args.forEach((arg) => {
+                        const span = iframe.contentDocument.createElement("span");
+                        if(arg && typeof(arg)==="object") {
+                            try {
+                                span.innerText = JSON.stringify(arg);
+                            } catch (e) {
+                                span.innerText = arg;
+                            }
+                        } else {
                             span.innerText = arg;
                         }
-                    } else {
-                        span.innerText = arg;
-                    }
-                    div.appendChild(span);
-                });
-                console.appendChild(div);
-            };
-        console.log = (...args) => log("black",...args);
-        console.warn = (...args) => log("orange",...args);
-        console.error = (arg) => {
-            if(arg+""===lastError) return;
-            lastError = arg+"";
-            log("red",arg);
+                        div.appendChild(span);
+                    });
+                    console.appendChild(div);
+                };
+            console.log = (...args) => log("black",...args);
+            console.warn = (...args) => log("orange",...args);
+            console.error = (arg) => {
+                if(arg+""===lastError) return;
+                lastError = arg+"";
+                log("red",arg);
+            }
+            console.clear = () => console.innerHTML = "";
         }
-        console.clear = () => console.innerHTML = "";
     },
     render() {
         const iframe = this.shadowRoot.querySelector("iframe"),
@@ -97,49 +89,54 @@ self.properties({
                 head: this.querySelector('slot[name="head"]'),
                 css: this.querySelector('slot[name="css"]'),
                 body: this.querySelector('slot[name="body"]'),
-                javascript: this.querySelector('slot[name="javascript"]')
+                script: this.querySelector('slot[name="script"]')
             },
-            style = this.querySelector('slot[name="replstyle"]');
-        if(style) {
-            this.shadowRoot.getElementById("replstyle").innerHTML = style.textContent;
-        }
+            readonly = this.hasAttribute("readonly") && this.getAttribute("readonly")!=="false" ? true : false,
+            lineNumbers = this.hasAttribute("linenumbers") && this.getAttribute("linenumbers")!=="false" ? true : false,
+            style = this.getAttribute("replstyle");
         ["allow","allowfullscren","allowpaymentrequest","csp","sandbox"].forEach((name) => {
             const value = this.getAttribute(name);
             if(value!=null) iframe.setAttribute(name,value)
         });
-        iframe.contentWindow.console.clear();
-        Object.entries(slots).forEach(([key,value]) => {
+        iframe.contentWindow?.console?.clear();
+        Object.entries(slots).forEach(([key,el],index) => {
             const hasSlot = this.hasAttribute(key) ? this.getAttribute(key)||true : "false";
             if(hasSlot==="false") {
                 this.querySelector(`slot[name=${key}]`)?.remove();
             } else {
-                if(!value) {
-                    value = slots[key] = document.createElement("slot");
-                    value.setAttribute("name",key);
-                    this.appendChild(value);
+                if(!el) {
+                    el = slots[key] = document.createElement("slot");
+                    el.setAttribute("name",key);
+                    this.appendChild(el);
                 }
             }
             const slot = this.shadowRoot.querySelector(`[slot="${key}"]`);
             slot.setAttribute("spellcheck","false");
-            let hidden;
-            if(value) {
-                const readonly = value.getAttribute("readonly")==="true"||value.getAttribute("readonly")===""||hasSlot==="readonly";
-                if(!readonly) slot.setAttribute("contenteditable","true");
-                if(key==="body") {
-                    slot.innerText = value.innerHTML;
-                } else {
-                    slot.innerText = value.textContent;
-                }
-                hidden = value.hasAttribute("hidden") && value.getAttribute("hidden")!=="false";
-                if(hidden) slot.parentElement.style.display = "none";
+            if(el?.hasAttribute("hidden") ? el.getAttribute("hidden")!=="false" : hasSlot==="hidden") {
+                slot.parentElement.style.display = "none";
+            } else {
+                slot.parentElement.style.display = "";
             }
-            if(!hidden) slot.parentElement.style.display = "";
+            if(!slot.editor) {
+                slot.editor ||= CodeMirror(slot,{
+                    lineNumbers: el?.hasAttribute("linenumbers") ? el.getAttribute("linenumbers")!=="false" :  lineNumbers,
+                    readOnly: (el?.hasAttribute("readonly") ? el.getAttribute("readonly")!=="false" : hasSlot==="readonly" || readonly) ? "nocursor" : false,
+                    value:el ? el.innerHTML : "",
+                    mode: key==="body"||key==="head" ? "text/html" : (key==="script" ? "application/javascript" : "text/css")
+                });
+                slot.editor.on("change",() => {
+                    this.render();
+                });
+                if(style||el?.hasAttribute("style")) {
+                    const editors = [...this.shadowRoot.querySelectorAll(".CodeMirror")];
+                    editors[index].setAttribute("style",(style||"")+";"+(el?.getAttribute("style")||""));
+                }
+            }
             if(hasSlot==="false") {
                 slot.parentElement.style.display = "none";
             } else if(hasSlot==="readonly" || hasSlot==="disabled") {
                 slot.setAttribute("readonly","");
                 slot.setAttribute("disabled","");
-                slot.setAttribute("contenteditable","false");
             } else if(hasSlot==="hidden") {
                 slot.parentElement.style.display = "none";
             }
@@ -147,14 +144,12 @@ self.properties({
         iframe.contentDocument.head.innerHTML = "";
         if(slots.head) {
             const head = this.shadowRoot.querySelector('[slot="head"]');
-            hljs.highlightElement(head);
-            iframe.contentDocument.head.innerHTML = head.textContent;
+            iframe.contentDocument.head.innerHTML = head.editor.getValue();
         }
         if(slots.css) {
             const css = this.shadowRoot.querySelector('[slot="css"]'),
                 style = document.createElement("style");
-            style.innerText = css.textContent;
-            hljs.highlightElement(css);
+            style.innerText = css.editor.getValue();
             iframe.contentDocument.head.appendChild(style);
         }
         iframe.contentDocument.body.innerHTML = "";
@@ -163,56 +158,16 @@ self.properties({
             [...slots.body.attributes].forEach((attr) => {
                 if(attr.name!=="name") iframe.contentDocument.body.setAttribute(attr.name,attr.value);
             });
-            hljs.highlightElement(body);
-            iframe.contentDocument.body.innerHTML = body.innerText;
+            iframe.contentDocument.body.innerHTML = body.editor.getValue();
         }
-        if(slots.javascript) {
-            const javascript = this.shadowRoot.querySelector('[slot="javascript"]'),
-                script = document.createElement("script");
-            [...slots.javascript.attributes].forEach((attr) => {
+        if(slots.script) {
+            const script = this.shadowRoot.querySelector('[slot="script"]'),
+                _script = document.createElement("script");
+            [...slots.script.attributes].forEach((attr) => {
                 if(attr.name!=="name") script.setAttribute(attr.name,attr.value);
             });
-            script.innerHTML = javascript.textContent;
-            hljs.highlightElement(javascript);
-            iframe.contentDocument.body.appendChild(script);
-        }
-        if(this.cursor.node) {
-            const selection = document.getSelection();
-            selection.extend(this.cursor.node);
-            const range = selection.getRangeAt(0);
-            let offset, text = this.cursor.node.start;
-            const findNode = (node) => {
-                for(const child of node.childNodes) {
-                    node = child;
-                    if(node.textContent.length>=text.length) {
-                        if(node.childNodes.length>0) {
-                            node = findNode(node);
-                            if(text.length===0) break;
-                        } else {
-                            offset = text.length;
-                            if(this.cursor.node.previousTextContent.length>this.cursor.node.textContent.length) {
-                                --offset;
-                            }
-                        }
-                        break;
-                    }
-                    if(text.startsWith(node.textContent)) {
-                        text = text.substring(node.textContent.length);
-                        if(text.length===0) {
-                            offset = 1;
-                            break;
-                        }
-                    }
-                }
-                return node;
-            }
-            const node = findNode(this.cursor.node);
-            if(node) {
-                if(offset===undefined && node.nodeType===Node.TEXT_NODE) offset = node.textContent.length;
-                range.setStart(node,offset);
-            }
-            // loop through child node textContent up to the index
-            // set the range at the last node + remainder of index
+            _script.innerHTML = script.editor.getValue();
+            iframe.contentDocument.body.appendChild(_script);
         }
     }
 })

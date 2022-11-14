@@ -98,6 +98,8 @@ HTML is sanitized in addition to being placed in an iframe.
 
 # Version History (reverse chronological order)
 
+2022-10-20 v0.0.12 Fixed issue related to user changes made in 'code' section of REPL when HTML tags are included (they were getting changed to entities).
+
 2022-10-20 v0.0.11 Made explicit value of 'false' for slot attributes work properly. Capture 'keydown' and stop propagation
 in case `repl-host` is embedded in a `contentedtiable` element. Adjusted HTML body rendering and copying so that DOM coversions to and from
 HTML worked properly. Added support for 'hidden' attribute. Updated docs.
