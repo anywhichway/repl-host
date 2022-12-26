@@ -40,6 +40,12 @@ CSS.
 <repl-host css body></repl-host>
 ```
 
+You can provide line numbers for the editors by providing the `linenumbers` boolean attribute.
+
+```html
+<repl-host css body linenumbers></repl-host>
+```
+
 You can provide initial content for any section of the REPL using slots:
 
 ```html
@@ -97,6 +103,8 @@ https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe.
 HTML is sanitized in addition to being placed in an iframe.
 
 # Version History (reverse chronological order)
+
+2022-10-20 v0.0.14 Ensure visibility of REPL when timing issues leave it hidden by quickComponent. v0.0.13 added CodeClimate support with line numbers.
 
 2022-10-20 v0.0.12 Fixed issue related to user changes made in 'code' section of REPL when HTML tags are included (they were getting changed to entities).
 

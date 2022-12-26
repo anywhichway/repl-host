@@ -15,7 +15,7 @@ function css_sanitize(css) {
 self.properties({
     initialize() {
         this.addEventListener("keydown",(event) => {
-           // event.stopImmediatePropagation();
+            // event.stopImmediatePropagation();
         })
     },
     connected() {
@@ -169,8 +169,6 @@ self.properties({
             _script.innerHTML = script.editor.getValue();
             iframe.contentDocument.body.appendChild(_script);
         }
+        this.shadowRoot.querySelector(".repl").style.display = "block"; // this sometimes gets set to none by quickComponent and timing issues prevent it from being removed
     }
 })
-
-
-

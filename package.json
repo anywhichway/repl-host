@@ -1,6 +1,6 @@
 {
   "name": "@anywhichway/repl-host",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "A web component for hosting REPLs",
   "main": "index.html",
   "scripts": {
