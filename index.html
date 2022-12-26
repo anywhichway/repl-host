@@ -13,6 +13,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js" integrity="sha512-I6CdJdruzGtvDyvdO4YsiAq+pkWf2efgd1ZUSK2FnM/u2VuRASPC7GowWQrWyjxCZn6CT89s3ddGI+be0Ak9Fg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/htmlmixed/htmlmixed.min.js" integrity="sha512-HN6cn6mIWeFJFwRN9yetDAMSh+AK9myHF1X9GlSlKmThaat65342Yw8wL7ITuaJnPioG0SYG09gy0qd5+s777w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/css/css.min.js" integrity="sha512-rQImvJlBa8MV1Tl1SXR5zD2bWfmgCEIzTieFegGg89AAt7j/NBEe50M5CqYQJnRwtkjKMmuYgHBqtD1Ubbk5ww==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/display/placeholder.min.js" integrity="sha512-acBo6sW2h2GZQ9BqU9v5RyYGPUEr1a9jrukJg825Y0ahxAg/7aqTNPtcalloqnf4DfsRVdcdNmcBNWPD8b8W8Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="./js_beautify.js"></script>
 <style>
     div.repl {
@@ -35,12 +36,12 @@
 </style>
 <style id="replstyle"></style>
 <div class="repl">
-<pre placeholder="head" title="head"><code slot="head" class="hljs language-html"></code></pre>
-<div slot="css"></div>
-<div slot="body"></div>
-<div slot="script"></div>
-<iframe></iframe>
-<div class="console"></div>
+    <div slot="head"></div>
+    <div slot="css"></div>
+    <div slot="body"></div>
+    <div slot="script"></div>
+    <iframe></iframe>
+    <div class="console"></div>
 </div>
 <script type="module" src="./index.js"></script>
 </body>

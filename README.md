@@ -104,6 +104,8 @@ HTML is sanitized in addition to being placed in an iframe.
 
 # Version History (reverse chronological order)
 
+2022-10-20 v0.0.15 Make editors resizable and add placeholder text for empty editors.
+
 2022-10-20 v0.0.14 Ensure visibility of REPL when timing issues leave it hidden by quickComponent. v0.0.13 added CodeClimate support with line numbers.
 
 2022-10-20 v0.0.12 Fixed issue related to user changes made in 'code' section of REPL when HTML tags are included (they were getting changed to entities).

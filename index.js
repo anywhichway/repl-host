@@ -122,15 +122,19 @@ self.properties({
                     lineNumbers: el?.hasAttribute("linenumbers") ? el.getAttribute("linenumbers")!=="false" :  lineNumbers,
                     readOnly: (el?.hasAttribute("readonly") ? el.getAttribute("readonly")!=="false" : hasSlot==="readonly" || readonly) ? "nocursor" : false,
                     value:el ? el.innerHTML : "",
-                    mode: key==="body"||key==="head" ? "text/html" : (key==="script" ? "application/javascript" : "text/css")
+                    mode: key==="body"||key==="head" ? "htmlmixed" : (key==="script" ? "javascript" : "css"),
+                    placeholder: key + "..."
                 });
                 slot.editor.on("change",() => {
                     this.render();
                 });
+                const editors = [...this.shadowRoot.querySelectorAll(".CodeMirror")];
+                editors[index].style.resize = "vertical";
+                editors[index].style.height = "10em";
                 if(style||el?.hasAttribute("style")) {
-                    const editors = [...this.shadowRoot.querySelectorAll(".CodeMirror")];
                     editors[index].setAttribute("style",(style||"")+";"+(el?.getAttribute("style")||""));
                 }
+
             }
             if(hasSlot==="false") {
                 slot.parentElement.style.display = "none";
